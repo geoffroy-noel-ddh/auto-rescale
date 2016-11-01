@@ -38,6 +38,8 @@ After
 * run this python script: python rescale.py
 * now all external display should have a sclaing similar to your laptop screen
 
+* to revert the changes and reset all scaling to 1, use the following command: python rescale.py reset
+
 # Requirements
 * Ubuntu (tested with 16.10)
 * xrandr (sudo apt install xrandr)
@@ -56,4 +58,4 @@ After
 * let the user specify scaling
 * accept user defined parameters such as the horizontal order of the displays
 * remember config from previous executions
-* way to revert changes
+
