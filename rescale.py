@@ -113,8 +113,14 @@ class Rescaler(object):
                     
                     # experimental: take the smallest scale factor
                     # apply it to both dimensions
-                    s['sx'] = s['sy'] = min(s['sx'], s['sy'])
-
+                    if 1:
+                        s['sx'] = s['sy'] = min(s['sx'], s['sy'])
+                    
+                    # align to nearest half unit
+                    if 1:
+                        for f in ['sx', 'sy']:
+                            s[f] = int(s[f]*2)/2.0
+                    
                     # recalculate the scaled width and height
                     s['wspx'] = int(s['sx'] * s['wpx'])
                     s['hspx'] = int(s['sy'] * s['hpx'])
