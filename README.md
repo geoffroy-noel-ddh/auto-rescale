@@ -14,11 +14,31 @@ This solves a some common issues such as:
 
 This tool only change the 'scale' and 'position' of your displays. It doesn't change the resolution and the order (from left to right) of your displays.  
 
+# Illustration
+
+<table>
+<tr>
+<td>
+<img src="doc/rescale-before-small.jpg?raw=true" height="500" />
+<br/>
+Before
+</td>
+<td>
+<img src="doc/rescale-after-small.jpg?raw=true" height="500" />
+<br/>
+After
+</td>
+</tr>
+</table>
+
+
 # Usage
 * attach external displays to your laptop
 * use ubuntu to enable them and rearrange them spcially according to your needs. Make sure things on your laptop monitor are not too big or too small. Don't worry about the other monitors.
 * run this python script: python rescale.py
 * now all external display should have a sclaing similar to your laptop screen
+
+* to revert the changes and reset all scaling to 1, use the following command: python rescale.py reset
 
 # Requirements
 * Ubuntu (tested with 16.10)
@@ -38,4 +58,4 @@ This tool only change the 'scale' and 'position' of your displays. It doesn't ch
 * let the user specify scaling
 * accept user defined parameters such as the horizontal order of the displays
 * remember config from previous executions
-* way to revert changes
+
