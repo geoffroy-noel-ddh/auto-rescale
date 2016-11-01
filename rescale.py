@@ -62,34 +62,6 @@ class Rescaler(object):
             
         self.settings = settings
 
-    def getDisplaySettingsFromActiveMonitors(self):
-        # No longer used as the info is incomplete
-        # $ xrandr --listactivemonitors
-        # Monitors: 2
-        #  0: +eDP1 1920/290x1080/170+1920+0  eDP1
-        #  1: +HDMI2 2880/510x1620/290+0+0  HDMI2
-
-        settings = []
-        
-        info = self.run('xrandr --listactivemonitors')
-        
-        print info
-        
-        for parts in re.findall(ur'\d+:\s+\+(\w+)\s+(\d+)/(\d+)x(\d+)/(\d+)\+(\d+)\+(\d+)\s+(\w+)', info['output']):
-            settings.append({
-                'output': parts[0],
-                'wpx': parts[1],
-                'hpx': parts[3],
-                'wmm': parts[2],
-                'hmm': parts[4],
-                'oxpx': parts[5],
-                'oypx': parts[6],
-                'sx': 1,
-                'sy': 1, 
-            })
-        print settings
-        self.settings = settings
-    
     def updateDisplaySettings(self):
         #new_settings = []
         
