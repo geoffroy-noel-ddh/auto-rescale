@@ -5,8 +5,10 @@ import re
 #xrandr --output eDP1 --scale 1x1 --pos 320x2400
 
 class Rescaler(object):
-
-    def rescale(self):
+    
+    def rescale(self, options=None):
+        self.options = options or []
+        
         self.getDisplaySettings()
         
         self.showDisplaySettings()
@@ -121,6 +123,10 @@ class Rescaler(object):
                         for f in ['sx', 'sy']:
                             s[f] = int(s[f]*2)/2.0
                     
+                    if 'reset' in self.options:
+                        for f in ['sx', 'sy']:
+                            s[f] = 1
+                    
                     # recalculate the scaled width and height
                     s['wspx'] = int(s['sx'] * s['wpx'])
                     s['hspx'] = int(s['sy'] * s['hpx'])
@@ -164,8 +170,12 @@ class Rescaler(object):
             ret['output'] = output
         return ret
 
+#-------------------------
+
+import sys
+
 rescaler = Rescaler()
-rescaler.rescale()
+rescaler.rescale(sys.argv[1:])
 
 # ret = run('xrandr -q')
 # print ret
