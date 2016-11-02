@@ -16,6 +16,11 @@ This tool only change the 'scale' and 'position' of your displays. It doesn't ch
 
 # Illustration
 
+In this example a window is displayed half on an external monitor and the other half on a laptop screen. Both have a resolution of 1920x1080.
+
+By default the scaling is 1 on both screen and the window appears too large on the external monitor but the right size on the laptop.
+The second picture shows the adjusted size after running the rescale script.  
+
 <table>
 <tr>
 <td>
