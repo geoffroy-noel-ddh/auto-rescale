@@ -1,6 +1,6 @@
 # auto-rescale
 
-*Harmonise the scaling across multiple displays*
+Harmonise the scaling across multiple displays
 
 # Description
 
@@ -34,9 +34,9 @@ After
 
 # Usage
 * attach external displays to your laptop
-* use ubuntu to enable them and rearrange them spcially according to your needs. Make sure things on your laptop monitor are not too big or too small. Don't worry about the other monitors.
+* use ubuntu to enable them and rearrange them spacially according to your needs. Make sure things on your laptop monitor are not too big or too small. Don't worry about the other monitors
 * run this python script: python rescale.py
-* now all external display should have a sclaing similar to your laptop screen
+* now all external display should have a scaling similar to your laptop screen
 
 * to revert the changes and reset all scaling to 1, use the following command: python rescale.py reset
 

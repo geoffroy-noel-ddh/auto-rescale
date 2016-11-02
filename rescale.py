@@ -80,28 +80,35 @@ class Rescaler(object):
                 if s['output'] != ref['output']:
                     s['sx'] = (1.0 * s['wmm'] / ref['wmm']) * (1.0 * ref['wpx'] / s['wpx'])
                     s['sy'] = (1.0 * s['hmm'] / ref['hmm']) * (1.0 * ref['hpx'] / s['hpx'])
+                else:
+                    s['sx'] = 1.0
+                    s['sy'] = 1.0
+                #print s['sx'], s['sy']
 
-                    # round the scaling to first decimal
+                # round the scaling to first decimal
+                for f in ['sx', 'sy']:
+                    s[f] = round(s[f], 1)
+                
+                # experimental: take the smallest scale factor
+                # apply it to both dimensions
+                if 1:
+                    s['sy'] = min(s['sx'], s['sy'])
+                    s['sy'] = min(2,s['sy'])
+                    s['sx'] = s['sy']
+                
+                # align to nearest half unit
+                granularity = 0.25
+                if 1:
                     for f in ['sx', 'sy']:
-                        s[f] = round(s[f], 1)
-                    
-                    # experimental: take the smallest scale factor
-                    # apply it to both dimensions
-                    if 1:
-                        s['sx'] = s['sy'] = min(s['sx'], s['sy'])
-                    
-                    # align to nearest half unit
-                    if 1:
-                        for f in ['sx', 'sy']:
-                            s[f] = int(s[f]*2)/2.0
-                    
-                    if 'reset' in self.options:
-                        for f in ['sx', 'sy']:
-                            s[f] = 1
-                    
-                    # recalculate the scaled width and height
-                    s['wspx'] = int(s['sx'] * s['wpx'])
-                    s['hspx'] = int(s['sy'] * s['hpx'])
+                        s[f] = int(s[f]/granularity)*granularity
+                
+                if 'reset' in self.options:
+                    for f in ['sx', 'sy']:
+                        s[f] = 1
+                
+                # recalculate the scaled width and height
+                s['wspx'] = int(s['sx'] * s['wpx'])
+                s['hspx'] = int(s['sy'] * s['hpx'])
                     
             # recalculate the position of each display on the virtual space
             pos = [0, 0]
@@ -116,17 +123,33 @@ class Rescaler(object):
         #self.settings = new_settings
             
     def applyDisplaySettings(self):
-        if 1:
+        if self.settings:
+            fb = [
+                sum([s2['wspx'] for s2 in self.settings]), 
+                max([s2['hspx'] for s2 in self.settings])
+            ] 
+            command = 'xrandr --fb %dx%d' % (fb[0], fb[1])
             for s in self.settings:
                 # scaling
+                command += ' '
                 s['sx'] = 1.0 * s['wspx'] / s['wpx']
-                s['sy'] = 1.0 * s['hspx'] / s['hpx'] 
+                s['sy'] = 1.0 * s['hspx'] / s['hpx']
+                s['wfb'] = fb[0]
+                s['hfb'] = fb[1] 
                 # frame buffer size for the entire virtual screen 
-                s['wbpx'] = sum([s2['wspx'] for s2 in self.settings])
-                s['hbpx'] = max([s2['hspx'] for s2 in self.settings]) 
-                command = 'xrandr --output %(output)s --scale %(sx).1fx%(sy).1f --mode %(wpx)dx%(hpx)d --fb %(wbpx)dx%(hbpx)d --pos %(oxpx)dx%(oypx)d' % s
-                print command
-                self.run(command)
+                command += '--output %(output)s --mode %(wpx)dx%(hpx)d --scale %(sx).2fx%(sy).2f --panning 0x0+0+0/0x0+0+0/0/0/0/0 --pos %(oxpx)dx%(oypx)d ' % s
+            print command
+            if 1:
+                r = self.run(command)
+                print r['output']
+            command = 'xrandr --fb %dx%d' % (fb[0], fb[1])
+            for s in self.settings:
+                command += ' '
+                command += '--output %(output)s --panning %(wspx)sx%(hspx)s+%(oxpx)s+%(oypx)s/%(wspx)sx%(hspx)s+%(oxpx)s+%(oypx)s/0/0/0/0' % s
+            print command
+            if 1:
+                r = self.run(command)
+                print r['output']
         # xrandr --output eDP1 --scale 1.0x1.0 --mode 1920x1080 --fb 4800x1620 --pos 1920x0
         # xrandr --output HDMI2 --scale 1.5x1.5 --mode 1920x1080 --fb 4800x1620 --pos 0x0
 
@@ -137,6 +160,7 @@ class Rescaler(object):
             output = check_output(command, stderr=STDOUT, shell=True, universal_newlines=True)
         except CalledProcessError as exc:
             ret = {'error': exc.returncode, 'output': exc.output}
+            print exc.output
             raise exc
         else:
             ret['output'] = output
