@@ -45,6 +45,9 @@ After
 
 * to revert the changes and reset all scaling to 1, use the following command: python rescale.py reset
 
+* It is recommended to set up a keyboard shortcut to run the script, e.g. SUPER+s.
+* If the script doesn't get things right the first time, a second execution can often solvve the issue.
+
 # Requirements
 * Ubuntu (tested with 16.10)
 * xrandr (sudo apt install xrandr)
