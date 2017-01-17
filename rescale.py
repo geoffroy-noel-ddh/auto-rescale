@@ -1,10 +1,12 @@
 from subprocess import check_output, CalledProcessError, STDOUT
-import re
+import re, os
 
 #xrandr --output HDMI1 --scale 2x2 --mode 1920x1200 --fb 3840x4200 --pos 0x0
 #xrandr --output eDP1 --scale 1x1 --pos 320x2400
 
 class Rescaler(object):
+    
+    filepath = os.path.expanduser('~/.rescale.json')
 
     def rescale(self, options=None):
         self.options = options or []
@@ -13,11 +15,34 @@ class Rescaler(object):
 
         self.showDisplaySettings()
 
-        self.updateDisplaySettings()
+        if 'show' in options:
+            return
+        
+        if 'save' in options:
+            self.saveDisplaySettings()
 
-        self.showDisplaySettings()
+        if 'load' in options:
+            self.loadDisplaySettings()
 
-        self.applyDisplaySettings()
+        if 'auto' in options:
+            self.updateDisplaySettings()
+    
+        if 'auto' in options or 'load' in options or 'reset' in options :
+            self.showDisplaySettings()
+    
+            self.applyDisplaySettings()
+
+    def saveDisplaySettings(self):
+        import json
+        f = open(self.filepath, 'wb')
+        f.write(json.dumps(self.settings))
+        f.close()
+
+    def loadDisplaySettings(self):
+        import json
+        f = open(self.filepath, 'rt')
+        self.settings = json.loads(f.read())
+        f.close()
 
     def showDisplaySettings(self):
         print '-' * 40
@@ -137,17 +162,21 @@ class Rescaler(object):
                 s['wfb'] = fb[0]
                 s['hfb'] = fb[1]
                 # frame buffer size for the entire virtual screen
-                command += '--output %(output)s --mode %(wpx)dx%(hpx)d --scale %(sx).2fx%(sy).2f --panning 0x0+0+0/0x0+0+0/0/0/0/0 --pos %(oxpx)dx%(oypx)d ' % s
+                s['scale'] = ' --scale %(sx).2fx%(sy).2f ' % s
+                if '--noscale' in self.options:
+                    s['scale'] = ''
+                command += '--output %(output)s --mode %(wpx)dx%(hpx)d %(scale)s --panning 0x0+0+0/0x0+0+0/0/0/0/0 --pos %(oxpx)dx%(oypx)d ' % s
             print command
-            if 1:
+            if not '--dry-run' in self.options:
                 r = self.run(command)
                 print r['output']
             command = 'xrandr --fb %dx%d' % (fb[0], fb[1])
+            
             for s in self.settings:
                 command += ' '
                 command += '--output %(output)s --panning %(wspx)sx%(hspx)s+%(oxpx)s+%(oypx)s/%(wspx)sx%(hspx)s+%(oxpx)s+%(oypx)s/0/0/0/0' % s
             print command
-            if 1:
+            if not '--dry-run' in self.options and not '--nopanning' in self.options:
                 r = self.run(command)
                 print r['output']
         # xrandr --output eDP1 --scale 1.0x1.0 --mode 1920x1080 --fb 4800x1620 --pos 1920x0
