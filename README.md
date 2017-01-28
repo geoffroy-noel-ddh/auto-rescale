@@ -57,6 +57,7 @@ After
 * assumed that all your displays are side by side at the same distance from teh user. So it won't work with very large display such as projectors
 * currently assumes that the bottom of all display are horizontally aligned
 * it is assumed that your laptop display is labelled 'eDP1' by xrandr
+* won't work with DisplayLink outputs because they don't support xrandr scaling
 
 # Bugs
 * text may not always be legible on lower resolution external monitors
